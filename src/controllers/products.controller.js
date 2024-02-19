@@ -1,9 +1,9 @@
-import { getConnection, querys, sql } from "../database";
+import { getConnection, sql } from "../database/connection.js";
 
 export const getProducts = async (req, res) => {
   try {
     const pool = await getConnection();
-    const result = await pool.request().query(querys.getAllProducts);
+    const result = await pool.request().query("SELECT * FROM products");
     res.json(result.recordset);
   } catch (error) {
     res.status(500);
@@ -12,27 +12,32 @@ export const getProducts = async (req, res) => {
 };
 
 export const createNewProduct = async (req, res) => {
-  const { name, description } = req.body;
-  let { quantity } = req.body;
+  const { name, description, quantity = 0, price } = req.body;
 
-  // validating
   if (description == null || name == null) {
     return res.status(400).json({ msg: "Bad Request. Please fill all fields" });
   }
 
-  if (quantity == null) quantity = 0;
-
   try {
     const pool = await getConnection();
 
-    await pool
+    const result = await pool
       .request()
       .input("name", sql.VarChar, name)
       .input("description", sql.Text, description)
       .input("quantity", sql.Int, quantity)
-      .query(querys.addNewProduct);
+      .input("price", sql.Decimal, price)
+      .query(
+        "INSERT INTO products (name, description, quantity, price) VALUES (@name,@description,@quantity,@price); SELECT SCOPE_IDENTITY() as id"
+      );
 
-    res.json({ name, description, quantity });
+    res.json({
+      name,
+      description,
+      quantity,
+      price,
+      id: result.recordset[0].id,
+    });
   } catch (error) {
     res.status(500);
     res.send(error.message);
@@ -46,7 +51,8 @@ export const getProductById = async (req, res) => {
     const result = await pool
       .request()
       .input("id", req.params.id)
-      .query(querys.getProducById);
+      .query("SELECT * FROM products WHERE id = @id");
+
     return res.json(result.recordset[0]);
   } catch (error) {
     res.status(500);
@@ -61,7 +67,7 @@ export const deleteProductById = async (req, res) => {
     const result = await pool
       .request()
       .input("id", req.params.id)
-      .query(querys.deleteProduct);
+      .query("DELETE FROM products WHERE id = @id");
 
     if (result.rowsAffected[0] === 0) return res.sendStatus(404);
 
@@ -74,30 +80,38 @@ export const deleteProductById = async (req, res) => {
 
 export const getTotalProducts = async (req, res) => {
   const pool = await getConnection();
-
-  const result = await pool.request().query(querys.getTotalProducts);
-  console.log(result);
+  const result = await pool.request().query("SELECT COUNT(*) FROM products");
   res.json(result.recordset[0][""]);
 };
 
 export const updateProductById = async (req, res) => {
-  const { description, name, quantity } = req.body;
+  const { description, name, quantity = 0, price } = req.body;
 
-  // validating
-  if (description == null || name == null || quantity == null) {
+  if (
+    description == null ||
+    name == null ||
+    quantity == null ||
+    price == null
+  ) {
     return res.status(400).json({ msg: "Bad Request. Please fill all fields" });
   }
 
   try {
     const pool = await getConnection();
-    await pool
+    const result = await pool
       .request()
+      .input("id", req.params.id)
       .input("name", sql.VarChar, name)
       .input("description", sql.Text, description)
       .input("quantity", sql.Int, quantity)
-      .input("id", req.params.id)
-      .query(querys.updateProductById);
-    res.json({ name, description, quantity });
+      .input("price", sql.Decimal, price)
+      .query(
+        "UPDATE products SET name = @name, description = @description, quantity = @quantity, price = @price WHERE id = @id"
+      );
+
+    if (result.rowsAffected[0] === 0) return res.sendStatus(404);
+
+    res.json({ name, description, quantity, price, id: req.params.id });
   } catch (error) {
     res.status(500);
     res.send(error.message);

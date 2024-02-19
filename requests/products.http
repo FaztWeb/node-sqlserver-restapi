@@ -7,26 +7,28 @@ POST http://localhost:3000/api/products
 Content-Type: application/json
 
 {
-    "name": "product 2",
+    "name": "product 10",
+    "price": 10,
    "description": "some product",
-   "quantity": 10
+   "quantity": 14
 }
 
 ### get product
-{{api}}/10
+{{api}}/11
 
 ### delete product 
-DELETE {{api}}/10
+DELETE {{api}}/100
 
 ### get count
 {{api}}/count
 
 ### update
-PUT {{api}}/11
+PUT {{api}}/9
 Content-Type: application/json
 
 {
     "name": "laptop",
+    "price": 30,
     "description": "some laptop",
     "quantity": 20
 }

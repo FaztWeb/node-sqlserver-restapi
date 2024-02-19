@@ -6,7 +6,7 @@ import {
   deleteProductById,
   getTotalProducts,
   updateProductById,
-} from "../controllers/products.controller";
+} from "../controllers/products.controller.js";
 
 const router = Router();
 

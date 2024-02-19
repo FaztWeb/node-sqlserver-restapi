@@ -3,26 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "dev": "nodemon src --exec babel-node",
-    "build": "babel src -d dist",
-    "start": "node dist"
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
+    "dotenv": "^16.4.4",
+    "express": "^4.18.2",
     "morgan": "^1.10.0",
-    "mssql": "^7.1.0"
+    "mssql": "^10.0.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.14.3",
-    "@babel/core": "^7.14.3",
-    "@babel/node": "^7.14.2",
-    "@babel/preset-env": "^7.14.4",
-    "nodemon": "^2.0.7"
+    "nodemon": "^3.0.3"
   }
 }

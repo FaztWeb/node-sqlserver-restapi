@@ -1,3 +1,20 @@
+ -- CREATE DATABASE webstore;
+
+-- USE webstore;
+
+-- DROP TABLE IF EXISTS products;
+
+-- CREATE TABLE products (
+--   id INT IDENTITY(1,1) PRIMARY KEY,
+--   name VARCHAR(100),
+--   price DECIMAL(10, 2),
+--   quantity INT,
+--   description TEXT
+-- );
+
+-- EXEC sp_columns 'products';
+
+
 -- SELECT TOP(500) * FROM [webstore].[dbo].[Products];
 
 -- INSERT DATA
@@ -8,7 +25,6 @@
 
 SELECT COUNT(*) FROM webstore.dbo.Products;
 
- -- CREATE DATABASE webstore;
 
  SELECT USER_NAME();
 
